@@ -1,0 +1,9 @@
+.form-container__login-input-error:last-of-type {
+  margin-bottom: 203px;
+}
+
+@media screen and (max-width: 767px) {
+  .form-container__login-input-error:last-of-type {
+    margin-bottom: 291px;
+  }
+}
