@@ -1,0 +1,115 @@
+.card {
+  width: 270px;
+  height: 218px;
+  border-radius: 10px;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, .05);
+  background-color: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__image {
+  width: 270px;
+  height: 151px;
+  display: block;
+}
+
+.card__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 12px 0; 
+}
+
+.card__title {
+  max-width: 206px;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 16px;
+  padding: 0;
+  margin: 0;
+  /* text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; */
+}
+
+.card__button {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background-image: url(../../images/card_button-saving.svg);
+  background-color: #f9f9f9;
+  padding: 0;
+  background-clip: padding-box;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.09);
+  transition: .3s;
+  cursor: pointer;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -ms-transition: .3s;
+  -o-transition: .3s;
+}
+
+.card__button:hover {
+  background-color: #e5e5e5;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.card__button_active {
+  background-color: #2BE080;
+}
+
+.card__button_active:hover {
+  background-color: #aaeec9;
+}
+
+.card__button_delete {
+  background-image: url(../../images/card_button-delete.svg);
+  background-repeat: no-repeat;
+  background-size: 8px;
+  background-position: center;
+  background-color: #fdfdfd;
+  box-shadow: none;
+}
+
+.card__button_delete:hover {
+  background-color: #e8e8e8;
+}
+
+.card__duration {
+  font-size: 11px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 13px;
+  color: #a0a0a0;
+  padding-bottom: 14px;
+  padding-left: 12px;
+  margin-bottom: 0;
+  margin-top: auto;
+}
+
+@media screen and (max-width: 1000px) {
+  .card {
+    width: 339px;
+    height: 257px;
+  }
+  
+  .card__image {
+    width: 339px;
+    height: 190px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .card {
+    width: 300px;
+    height: 235px;
+  }
+  
+  .card__image {
+    width: 300px;
+    height: 168px;
+  }
+}
