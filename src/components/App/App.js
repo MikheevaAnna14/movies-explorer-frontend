@@ -13,7 +13,14 @@ import PopupInfo from '../PopupInfo/PopupInfo';
 import Navbar from '../Navbar/Navbar';
 
 
+
 function App() {
+
+// useEffect(() => {
+
+// })
+
+
   let LoggedIn = false;
   return(
     <div className="page">
