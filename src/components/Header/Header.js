@@ -22,7 +22,7 @@ function Header(props) {
     <>
       <div className={!props.locationMain ? "header" : "header  header_theme-color"}>
         <Link to="/">
-          <img src={headerLogo} alt='логотип' className='header__logo' />
+          <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
         <Navigation
           loggedIn={props.loggedIn}  
