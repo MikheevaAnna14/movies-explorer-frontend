@@ -7,11 +7,11 @@ import Header from "../Header/Header";
 import LoadMore from "../LoadMore/LoadMore";
 import Footer from "../Footer/Footer";
 
-function Movies () {
+function Movies (props) {
   return(
     <>
     <Header
-      loggedIn={true}
+      isLoggedIn={props.isLoggedIn}
     />
     <SearchForm />
     <FilterCheckbox />

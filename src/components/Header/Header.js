@@ -26,9 +26,9 @@ function Header(props) {
           <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
         <Navigation
-          loggedIn={props.loggedIn}  
+          isLoggedIn={props.isLoggedIn}  
         />     
-      {(props.loggedIn && 
+      {(props.isLoggedIn && 
         <button type="button" className={!props.locationMain ? "header__burger-menu" : 
           "header__burger-menu header__burger-menu_color"} onClick={handleClickBurger}>
           <img src={burgerMenu} alt='иконка бургер-меню' />

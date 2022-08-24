@@ -12,7 +12,7 @@ function Navbar (props) {
         <div className="navbar__container">
           <button type="button" className="navbar__container-close" onClick={props.onClose}/> 
           <Navigation 
-            loggedIn={true}
+            isLoggedIn={props.isLoggedIn}
             isOpen={props.isOpen}
           />
         </div>  

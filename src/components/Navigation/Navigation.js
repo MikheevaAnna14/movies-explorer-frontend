@@ -4,9 +4,10 @@ import { Link, NavLink } from "react-router-dom";
 import './Navigation.css';
 
 function Navigation(props) {
+  console.log('nav props.isLoggedIn', props.isLoggedIn);
   return(
-      <div className={props.loggedIn ? "nav nav_type-movies" : "nav"}>
-        {!props.loggedIn ?
+      <div className={props.isLoggedIn ? "nav nav_type-movies" : "nav"}>
+        {!props.isLoggedIn ?
           <>
             <ul className="nav__links">
               <li>
@@ -18,7 +19,7 @@ function Navigation(props) {
             </Link>
           </>
           :
-        (props.isOpen && props.loggedIn ? 
+        (props.isOpen && props.isLoggedIn ? 
             <>
               <ul className="nav__links">
                 <li>

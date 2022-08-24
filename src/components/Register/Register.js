@@ -2,37 +2,39 @@ import React, { useState } from "react";
 
 import Form from "../Form/Form";
 
-function Register () {
+function Register(props) {
   const [name, setName] = useState('');
-  const [isValidName, setIsValidName] = useState(false);
+  const [isChangeName, setIsChangeName] = useState(false);
+  const [isValidName, setIsValidName] = useState(true);
   const [errorName, setErrorName] = useState('');
+  const inputNameValid = isValidName && isChangeName;
+
+  React.useEffect(() => {
+    if(!isValidName) {  
+      setErrorName('Имя может содержать буквы, цифры, пробел, дефис и состоять из 2-30 символов')
+    } else {
+      setErrorName('')
+    }
+  }, [isValidName]);
 
   function handleChangeName(event) {
     const input = event.target;
     setName(input.value);
-    setIsValidName(input.validity.valid);
-    if(!isValidName) {
-      setErrorName(input.validationMessage)
-    } else {
-      setErrorName('')
-    }
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
+    setIsChangeName(true);
+    setIsValidName(input.value.match(/^[a-zа-яё\-\s]{2,30}$/gi));   
   }
 
   return(
     <Form
-      name="register"
       title="Добро пожаловать!"
       button="Зарегистрироваться"
       text="Уже зарегистрированы?"
       textLink="Войти"
       path="/signin"
       link="/signin"
-      onSubmit={handleSubmit}
-      validity={isValidName}
+      onSubmit={props.onSubmit}
+      validity={inputNameValid}
+      name={name}
     >
       <label htmlFor="register-name" className="form-container__label">Имя</label>
       <input

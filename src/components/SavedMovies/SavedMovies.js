@@ -8,11 +8,11 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 // import MoviesCard from "../MoviesCard/MoviesCard";
 import LoadMore from "../LoadMore/LoadMore";
 
-function SavedMovies () {
+function SavedMovies (props) {
   return(
     <div className="saved-movies">
       <Header
-        loggedIn={true}
+        isLoggedIn={props.isLoggedIn}
       />
       <SearchForm />
       <FilterCheckbox />
