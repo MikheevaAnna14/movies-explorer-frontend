@@ -9,9 +9,13 @@
 }
 
 .card__image {
+  border-radius: 10px 10px 0 0;
   width: 270px;
   height: 151px;
   display: block;
+  -webkit-border-radius: 10px 10px 0 0;
+  -ms-border-radius: 10px 10px 0 0;
+  -o-border-radius: 10px 10px 0 0;
 }
 
 .card__info {
@@ -29,9 +33,6 @@
   line-height: 16px;
   padding: 0;
   margin: 0;
-  /* text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden; */
 }
 
 .card__button {

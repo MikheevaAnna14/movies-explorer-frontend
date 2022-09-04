@@ -6,7 +6,6 @@ import SearchForm from "../SearchForm/SearchForm";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 // import MoviesCard from "../MoviesCard/MoviesCard";
-import LoadMore from "../LoadMore/LoadMore";
 
 function SavedMovies (props) {
   return(
@@ -20,7 +19,6 @@ function SavedMovies (props) {
       <MoviesCardList
         buttonDelete={true}
       />
-      <LoadMore />
     </div>
   )
 }

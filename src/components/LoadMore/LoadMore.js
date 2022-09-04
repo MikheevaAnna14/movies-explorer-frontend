@@ -1,11 +1,11 @@
 import React from "react";
-
 import './LoadMore.css';
 
-function LoadMore () {
+function LoadMore (props) {
+  const disable = props.disableLoadMore();
   return(
     <div className="load-more">
-      <button type="submit" className="load-more__button">Ещё</button>
+      <button type="button" className={!disable ? "load-more__button" : "load-more__button  load-more__button_disable"} onClick={props.onClick}>Ещё</button>
     </div>
   )
 }
