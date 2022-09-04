@@ -4,7 +4,7 @@ import './MoviesCardList.css';
 import MoviesCard from "../MoviesCard/MoviesCard";
 
 function MoviesCardList (props) {
-  const arraySavedMovies = props.arraySavedMovies;
+  // const arraySavedMovies = props.arraySavedMovies;
   // console.log('MCL arraySavedMovies', arraySavedMovies);
   // console.log('arraySavesMovies{ id }', arraySavesMovies{ id });
   // console.log('MCL movie', movie);
