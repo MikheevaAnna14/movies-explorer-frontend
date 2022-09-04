@@ -27,7 +27,7 @@ function Form (props) {
     const input = event.target;
     setEmail(input.value);
     setIsChangeEmail(true);
-    setIsValidEmail(input.value.match(/^[\w-\.]+@[\w-]+\.[a-z]{2,4}$/i));
+    setIsValidEmail(input.value.match(/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i));
   }
 
   function handleChangePassword(event) {
