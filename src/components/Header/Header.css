@@ -11,6 +11,14 @@
 }
 
 .header_theme-color {
+  width: 100%;
+  max-width: 1280px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 70px;
+  justify-content: space-between;
   background-color: #F3C1F8; 
 }
 
