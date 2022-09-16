@@ -67,14 +67,6 @@
   margin: 2px 0;
 }
 
-.profile-form__input-error_server-request {
-  margin: 171px 0 0;
-  font-size: 11px;
-  line-height: 13px;
-  text-align: center;
-  color: #ff004c;
-}
-
 .profile-form__line {
   width: 410px;
   color: #e8e8e8;
@@ -82,7 +74,7 @@
 }
 
 .profile-form__button {
-  margin: 20px 0 16px;
+  margin: 204px 0 16px;
   height: 16px;
   font-size: 13px;
   font-style: normal;

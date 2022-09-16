@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './Header.css';
 import headerLogo from '../../images/logo.svg';
@@ -9,6 +9,7 @@ import burgerMenu from '../../images/icon-burger.svg';
 
 function Header(props) {
   const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation();
 
   function handleClickBurger() {
     setIsOpen(true);
@@ -17,11 +18,11 @@ function Header(props) {
   function handleClose() {
     setIsOpen(false);
   }
-  
 
   return(
     <>
-      <div className={!props.locationMain ? "header" : "header  header_theme-color"}>
+      <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
+        ? "header" : "header  header_theme-color"}>
         <Link to="/">
           <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>

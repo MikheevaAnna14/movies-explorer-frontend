@@ -4,7 +4,6 @@ import { Link, NavLink } from "react-router-dom";
 import './Navigation.css';
 
 function Navigation(props) {
-  console.log('nav props.isLoggedIn', props.isLoggedIn);
   return(
       <div className={props.isLoggedIn ? "nav nav_type-movies" : "nav"}>
         {!props.isLoggedIn ?

@@ -6,6 +6,7 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import Header from "../Header/Header";
 import LoadMore from "../LoadMore/LoadMore";
 import Footer from "../Footer/Footer";
+import Preloader from "../Preloader/Preloader";
 
 function Movies (props) {
   const [row, setRow] = useState(4);
@@ -65,6 +66,9 @@ function Movies (props) {
     <FilterCheckbox 
       onClickCheckbox={props.onClickCheckbox}
     />
+    <Preloader 
+      isLoading={props.isLoading}
+    />
     <MoviesCardList
       rows={row}
       columns={column}
@@ -74,6 +78,7 @@ function Movies (props) {
       checkboxStatus={props.isChecked}
       onClickMoviesCard={props.onClickMoviesCard}
       arraySavedMovies={props.arraySavedMovies}
+      searchComplete={props.searchComplete}
     />
     <LoadMore
       onClick={handleClickLoadMore} 

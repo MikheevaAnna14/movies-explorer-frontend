@@ -4,10 +4,6 @@ const baseURL = document.location.protocol !== 'https:' ? 'http://api.annamikhee
 
 const imgServerUrl = 'https://api.nomoreparties.co';
 
-// const headers = {
-//   'Content-Type': 'application/json'
-// }
-
 const checkResponse = (res) => {
   if (res.ok) {
     return res.json()
@@ -39,20 +35,8 @@ export const login = (email, password) => {
   .then((res) => checkResponse(res))
 }; 
 
-// export const authorization = (email, password) => {
-//   return fetch(`${baseURL}/signin`, {
-//    method: 'POST',
-//    credentials: 'include',
-//    headers: {
-//      'Content-Type': 'application/json'
-//    },
-//    body: JSON.stringify({ password, email })
-//   })
-//   .then((res) => checkResponse(res)) 
-// };
 
 export const updateProfile = (userEmail, userName) => {
-  console.log('api', userName, userEmail);
   return fetch(`${baseURL}/users/me`, {
     method: 'PATCH',
     credentials: 'include', 
@@ -64,7 +48,7 @@ export const updateProfile = (userEmail, userName) => {
       email: userEmail
     })
   })
-  .then(this._checkResponse)
+  .then((res) => checkResponse(res))
 }
 
 export const signout = () => {
@@ -78,7 +62,7 @@ export const signout = () => {
   .then((res) => checkResponse(res)) 
 }
 
-export const movieSaved = (movie, like) => {
+export const movieSaved = (movie, like, moviesDelete) => {
   if(!like) {
     return fetch(`${baseURL}/movies`, {
       method: 'POST',
@@ -102,47 +86,35 @@ export const movieSaved = (movie, like) => {
     })
     .then((res) => checkResponse(res))
   } else {
-    return fetch(`${this._baseUrl}/movies/${movie.id}`, {
+    return fetch(`${baseURL}/movies/${moviesDelete._id}`, {
       method: 'DELETE',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
       })
-    .then(this._checkResponse)
+    .then(checkResponse)
   }
 }
 
+export const movieDelete = (movie) => {
+  return fetch(`${baseURL}/movies/${movie._id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+    })
+  .then(checkResponse)
+}
 
-
-
-// class Api {
-//   constructor({ baseURL, headers }) {
-//     this.baseURL = baseURL;
-//     this.headers = headers;
-//   }
-
-//   _checkResponse(res) {
-//     if(res.ok) {
-//       return res.json()
-//     } else {
-//       return Promise.reject(res.status)
-//     }
-//   }
-
-
-
-
-
-// }
-// // export const BaseUrl = document.location.protocol !== 'https:' ? 'http://api.annamikheeva.movies.nomoredomains.xyz'
-// //   :
-// //   'https://api.annamikheeva.movies.nomoredomains.xyz';
-
-
-// export const api = new Api ({
-//   baseURL: 'https://api.annamikheeva.movies.nomoredomains.xyz',
-//   headers: {
-//     'Content-Type': 'application/json'
-//   }
-// })
+export const getSavedMovies = () => {
+  return fetch(`${baseURL}/movies`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+    'Content-Type': 'application/json',
+    },
+  })
+  .then((res) => checkResponse(res)) 
+};

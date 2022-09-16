@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import './Profile.css';
 import Header from "../Header/Header";
 import CurrentUserContext from "../../contexts/CurrentUserContext";
@@ -12,14 +11,31 @@ function Profile (props) {
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [errorName, setErrorName] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
-
-  console.log('profile', currentUser);
+  const inputValid = isValidName && isValidEmail;
+  const inputChange = userName !== currentUser.name || userEmail !== currentUser.email;
 
   React.useEffect(() => {
-    console.log('currentUser.name', currentUser.name);
     setUserName(currentUser.name);
     setUserEmail(currentUser.email);
-  }, [currentUser])
+    setIsValidName(true);
+    setIsValidEmail(currentUser.email.match(/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i));
+  }, [currentUser]);
+
+  React.useEffect(() => {
+    if(!isValidName) {  
+      setErrorName('Имя может содержать буквы, цифры, пробел, дефис и состоять из 2-30 символов')
+    } else {
+      setErrorName('')
+    }
+  }, [isValidName]);
+
+  React.useEffect(() => {
+    if (!isValidEmail) {
+    setErrorEmail("Введен некорректный адрес электронной почты")
+    } else {
+      setErrorEmail('')
+    }
+  },[isValidEmail]);
   
   function handleChangeName(event) {
     const input = event.target;
@@ -35,9 +51,9 @@ function Profile (props) {
   function handleChangeEmail(event) {
     const input = event.target;
     setUserEmail(input.value);
-    setIsValidEmail(input.validity.valid);
+    setIsValidEmail(input.value.match(/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i));
     if(!isValidEmail) {
-      setErrorEmail(input.validationMessage)
+      setErrorEmail("Введен некорректный адрес электронной почты")
     } else {
       setErrorEmail('')
     }
@@ -54,7 +70,7 @@ function Profile (props) {
         isLoggedIn={props.isLoggedIn}
       />
       <form className="profile-form" name="form-profile" onSubmit={handleSubmit}>
-        <h1 className="profile-form__title">Привет, {userName}!</h1>
+        <h1 className="profile-form__title">Привет, {currentUser.name}!</h1>
         <div className="profile-form__container">
           <label htmlFor="profile-name" className="profile-form__label">Имя</label>
           <input
@@ -80,15 +96,13 @@ function Profile (props) {
           />
         </div>
         <span className="profile-form__input-error">{errorEmail}</span>
-        <span className="profile-form__input-error profile-form__input-error_server-request">
-          Вместо этого поля будет попап</span>
-          <button
-            type="submit"
-            className="profile-form__button"
-            disabled={!(isValidName && isValidEmail)}
-          >
-            Редактировать
-          </button>
+        <button
+          type="submit"
+          className="profile-form__button"
+          disabled={!(inputValid && inputChange)}
+        >
+          Редактировать
+        </button>
       </form>
         <button type="button" className="profile-form__button profile__button-exit" onClick={props.onClick}>
           Выйти из аккаунта

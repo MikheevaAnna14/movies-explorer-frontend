@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 
 import './App.css';
 import Main from '../Main/Main';
@@ -15,6 +15,7 @@ import * as api from '../../utils/MainApi';
 import * as movieApi from '../../utils/MoviesApi';
 import CurrentUserContext from './../../contexts/CurrentUserContext';
 import IsLoggedInContext from './../../contexts/IsLoggedInContext';
+import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 
 function App() {
@@ -31,8 +32,14 @@ function App() {
   const [isChecked, setIsChecked] = useState(false);
   const [shortFilms, setShortFilms] = useState([]);
   const [arraySavedMovies, setArraySavedMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [shortSavedMovies, setShortSavedMovies] = useState([]);
+  const [isCheckedSavedMovies, setIsCheckedSavedMovies] = useState(false);
+  const [selectSavedMovies, setSelectSavedMovies] = useState([]);
+  const [searchComplete, setSearchComplete] = useState(false);
 
   const history = useHistory();
+  const location = useLocation();
 
   React.useEffect(() => { 
     if(localStorage.getItem('resSearch') === null) {
@@ -41,30 +48,44 @@ function App() {
       setMovieSelected(JSON.parse(localStorage.getItem('resSearch')));
       setShortFilms((JSON.parse(localStorage.getItem('resSearch')).filter((film) => {
         return film.duration <= 40
-      })) )
+      })) );
     }
     setIsChecked(JSON.parse(localStorage.getItem('checkboxChecked')));
-    console.log('app json', JSON.parse(localStorage.getItem('checkboxChecked')));
   },[]);
 
+  React.useEffect(() => {
+    if (location.pathname.includes('/saved-movies')) {
+     setSelectSavedMovies(arraySavedMovies);
+     setIsCheckedSavedMovies(false);
+    }
+   },[location.pathname]);
+
+   React.useEffect(() => {
+    if (location.pathname.includes('/saved-movies')) {
+      if (isCheckedSavedMovies) {
+        setShortSavedMovies(selectSavedMovies.filter((res) => {
+          return res.duration <= 40
+      }))
+    }
+   }},[isCheckedSavedMovies]);
+
   function handleLoginSubmit(email, password) {
-    console.log('applog email pass', email, password);
     api.login(email, password)
       .then((res) => {
         setCurrentUser({ name: res.name, email: res.email, _id: res._id });
         setIsLoggedIn(true);
+        getMoviesCurrentUser();   
         history.push('/movies')
       })
       .catch((err) => {
-        console.log(err);
         setIsOpenPopup(true);
         setPopupInfoIcon(false);
         setPopupMessage(err === 401 ? 'Вы ввели неправильный email или пароль' : 'При авторизации произошла ошибка');
-      });
+      })
+    
   }
 
   function handleRegisterSubmit(email, password, name) {
-    console.log('app reg name, em, pass', name, email, password);
     api.registration(name, email, password)
       .then(() => { 
           setCurrentUser(name, email);
@@ -78,6 +99,19 @@ function App() {
       });
   }
 
+  function getMoviesCurrentUser() {
+    api.getSavedMovies()
+      .then((movies) => {
+        setArraySavedMovies(movies);        
+        if (isCheckedSavedMovies) {
+          setShortSavedMovies(movies.filter((res) => {
+            return res.duration <= 40
+          }))
+        }
+        })
+      .catch((err) => console.log(err));
+  }
+
   function handleClosePopupInfo () {
     setPopupMessage('');
     setIsOpenPopup(false);
@@ -85,10 +119,8 @@ function App() {
   }
 
   function handleUpdateProfile(userName, userEmail) {
-    console.log('App name, email', userName, userEmail);
     api.updateProfile(userEmail, userName)
       .then((res) => {
-        console.log('App res', res);
         setCurrentUser(res);
         setPopupMessage('Данные пользователя успешно изменены');
         setPopupInfoIcon(true);
@@ -110,8 +142,12 @@ function App() {
     setMovieSelected([]);
     setShortFilms([]);
     setIsChecked(false);
+    setArraySavedMovies([]);
+    setSearchComplete(false);
+    setShortSavedMovies([]);
+    setIsCheckedSavedMovies(false);
     localStorage.clear();
-    history.push('/signin');
+    history.push('/');
   }
 
   function checkShortFilms() {
@@ -139,19 +175,38 @@ function App() {
 
   function handleSearchSubmit(itemSearch) {
     localStorage.setItem('itemSearch', itemSearch);
-
+    setIsLoading(true)
     if(localStorage.getItem('movies') === null) {
       movieApi.moviesSearch()
         .then((res) => {
           localStorage.setItem('movies', JSON.stringify(res))
         }) 
         .then(() => {
-          handleSearchMovies(itemSearch);
+          handleSearchMovies(itemSearch)
+          setSearchComplete(true);
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
+        .finally(() => setIsLoading(false))
     } else {
       handleSearchMovies(itemSearch);
+      setIsLoading(false);
     }
+  }
+
+  function handleSearchSubmitSavedMovies(itemSearchSavedMovies) {
+    setSelectSavedMovies((arraySavedMovies.filter((movies) => {
+      const searchString = [movies.nameRU, movies.nameEN, movies.year, movies.director, movies.country].join(' ');
+      return ((searchString).toLowerCase()).includes((itemSearchSavedMovies).toLowerCase());
+    })));
+    if (isCheckedSavedMovies) {
+      const resSearchSavedMovies = (arraySavedMovies.filter((movies) => {
+        const searchString = [movies.nameRU, movies.nameEN, movies.year, movies.director, movies.country].join(' ');
+        return ((searchString).toLowerCase()).includes((itemSearchSavedMovies).toLowerCase());
+      }));
+      setShortSavedMovies(resSearchSavedMovies.filter((res) => {
+        return res.duration <= 40
+      }))
+    } 
   }
 
   function handleClickCheckbox(isCheck) {
@@ -163,51 +218,43 @@ function App() {
     }
   }
 
-  function handleClickMoviesCard(movie) {
-    console.log('movie', movie);
-
-    // console.log('movie.thumbnail', movie.image.formats.thumbnail.url);
-    const like = movie.owner === currentUser._id;
-    console.log('movie.owner', movie.owner);
-    console.log('currentUser._id', currentUser._id);
-    api.movieSaved(movie, like)
-      .then((res) => {
-        console.log('res', res); 
-        if(!like) {
-          setArraySavedMovies([res, ...arraySavedMovies]);
-          // setIsLike(false);
-        } else {setArraySavedMovies(arraySavedMovies.filter(function(movies) {
-          return movies !== movie
-          }))
-        }
-      })
-      .then(() => {
-        console.log('new arraySavedMovies', arraySavedMovies);
-      })
-      
-      
-      // .then((arraySavedMovies) => {
-      //   arraySavedMovies.filter((movies) => {
-      //     movies.id === movie.id)
-      //   }
-      // })
-      .catch((err) => console.log('err', err));
+  function handleClickCheckboxSavedMovies(isCheck) {
+    setIsCheckedSavedMovies(isCheck);
+    if (!isCheck) {
+      return
+    } else if (selectSavedMovies !== null){
+      setShortSavedMovies(selectSavedMovies.filter((movies) => {
+        return movies.duration <= 40
+      }))
+    } else if (arraySavedMovies !== null) {
+      setShortSavedMovies(arraySavedMovies.filter((movies) => {
+        return movies.duration <= 40
+      }))
+    }
+    return;
   }
 
-  // function handleCardLike(card) {
-  //   // Снова проверяем, есть ли уже лайк на этой карточке
-  //   const isLiked = card.likes.some(i => i === currentUser._id);
-  //   // Отправляем запрос в API и получаем обновлённые данные карточки
-  //   api.changeLikeCardStatus(card._id, !isLiked)
-  //     .then((newCard) => {
-  //     setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-  //     })
-  //     .catch(err => console.log("Ошибка:", err))
-  // }
+  function handleClickMoviesCard(movie, like) {
+    const moviesDelete = arraySavedMovies.find((movies) => movies.movieId === movie.id);
+    api.movieSaved(movie, like, moviesDelete)
+      .then(() => {
+        getMoviesCurrentUser()
+      })
+      .catch((err) => console.log(err));
+  }
 
-  console.log('app movieSelected', movieSelected);
-  console.log('app shortFilm', shortFilms);
-  console.log('app isChecked', isChecked);
+  function handleClickCardDelete(movie) {
+    api.movieDelete(movie)
+      .then(() => {
+        getMoviesCurrentUser();
+        if(selectSavedMovies.length !== 0) {
+          setSelectSavedMovies(selectSavedMovies.filter((movies) => {
+            return movies._id !== movie._id;
+          }));
+        }
+      })
+      .catch((err) => console.log(err));
+  }
 
   return(
     <div className="page">
@@ -216,23 +263,6 @@ function App() {
           <Switch>
             <Route exact path="/" >
               <Main
-                isLoggedIn={isLoggedIn}
-              />
-            </Route>
-            <Route path="/movies">
-              <Movies 
-                isLoggedIn={isLoggedIn}
-                onSubmit={handleSearchSubmit}
-                movieSelected={movieSelected}
-                shortMovies={shortFilms}
-                isChecked={isChecked}
-                onClickCheckbox={handleClickCheckbox}
-                onClickMoviesCard={handleClickMoviesCard}
-                arraySavedMovies={arraySavedMovies}
-              />
-            </Route>
-            <Route path="/saved-movies">
-              <SavedMovies 
                 isLoggedIn={isLoggedIn}
               />
             </Route>
@@ -246,13 +276,39 @@ function App() {
                 onSubmit={handleLoginSubmit}
               />
             </Route>
-            <Route path="/profile">
-              <Profile 
-                isLoggedIn={isLoggedIn}
-                onSubmit={handleUpdateProfile}
-                onClick={signout}
-              />
-            </Route>
+            <ProtectedRoute
+              path="/movies"
+              component={Movies}
+              isLoggedIn={isLoggedIn}
+              onSubmit={handleSearchSubmit}
+              movieSelected={movieSelected} 
+              shortMovies={shortFilms}
+              isChecked={isChecked}
+              onClickCheckbox={handleClickCheckbox}
+              onClickMoviesCard={handleClickMoviesCard}
+              arraySavedMovies={arraySavedMovies}
+              isLoading={isLoading}
+              searchComplete={searchComplete}
+            />
+            <ProtectedRoute
+              path="/saved-movies"
+              component={SavedMovies}
+              isLoggedIn={isLoggedIn}
+              arraySavedMovies={arraySavedMovies}
+              onClickCheckboxSavedMovies={handleClickCheckboxSavedMovies}
+              shortSavedMovies={shortSavedMovies}
+              isCheckedSavedMovies={isCheckedSavedMovies}
+              onSubmitSavedMovies={handleSearchSubmitSavedMovies}
+              selectSavedMovies={selectSavedMovies}
+              onClickMoviesCardDelete={handleClickCardDelete}
+            />
+            <ProtectedRoute
+              path="/profile"
+              component={Profile}
+              isLoggedIn={isLoggedIn}
+              onSubmit={handleUpdateProfile}
+              onClick={signout}
+            />
             <Route path="/navbar">
               <Navbar
                 isOpen={true}
@@ -268,7 +324,7 @@ function App() {
             Message={popupMessage}
             onClose={handleClosePopupInfo}
             icon={popupInfoIcon}
-          />   
+          />  
         </IsLoggedInContext.Provider>
       </CurrentUserContext.Provider>
     </div>

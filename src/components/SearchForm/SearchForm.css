@@ -30,7 +30,6 @@
 .search-form__input:focus {
   outline: none;
   box-shadow: 0 0 5px #4a4a4a;
-  /* box-shadow: 0 0 5px #2BE080; */
 }
 
 .search-form__input::placeholder {
@@ -54,7 +53,6 @@
 
 .search-form__line {
   color: #e8e8e8;
-  /* margin-top: 15px; */
   margin: 0;
 }
 

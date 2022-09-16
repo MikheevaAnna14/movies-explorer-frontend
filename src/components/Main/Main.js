@@ -12,8 +12,7 @@ function Main (props) {
   return(
     <>
       <Header 
-        isLoggedIn={props.isLoggedIn} 
-        locationMain={true}
+        isLoggedIn={props.isLoggedIn}
       />
       <Promo />
       <AboutProject />
