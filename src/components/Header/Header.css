@@ -28,11 +28,6 @@
   opacity: .5;
 }
 
-/* .header_type-movies {
-  width: 100%;
-  background-color: #fff;
-} */
-
 .header__burger-menu {
   display: none;
   border: none;
@@ -53,10 +48,6 @@
 .header__burger-menu_color {
   background-color: #F3C1F8;
 }
-
-/* .header__link:hover {
-  color: #a0a0a0;
-} */
 
 @media screen and (max-width: 1000px) {
   .header {
