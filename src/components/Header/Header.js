@@ -21,8 +21,9 @@ function Header(props) {
 
   return(
     <>
-      <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
-        ? "header" : "header header_theme-color"}>
+      {/* <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
+        ? "header" : "header header_theme-color"}> */}
+        <div className="header">
         <Link to="/">
           <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
@@ -39,6 +40,7 @@ function Header(props) {
       <Navbar 
         isOpen={isOpen}
         onClose={handleClose}
+        isLoggedIn={props.isLoggedIn}
       />
     </>
   )
