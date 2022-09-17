@@ -21,9 +21,8 @@ function Header(props) {
 
   return(
     <>
-      {/* <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
-        ? "header" : "header header_theme-color"}> */}
-        <div className="header">
+      <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
+        ? "header" : "header header_theme-pink"}>
         <Link to="/">
           <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
