@@ -22,7 +22,7 @@ function Header(props) {
   return(
     <>
       <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
-        ? "header" : "header  header_theme-color"}>
+        ? "header" : "header header_theme-color"}>
         <Link to="/">
           <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
