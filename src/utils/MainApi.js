@@ -1,3 +1,5 @@
+import isValidURL from "./Validation";
+
 const baseURL = document.location.protocol !== 'https:' ? 'http://api.annamikheeva.movies.nomoredomains.xyz'
   :
   'https://api.annamikheeva.movies.nomoredomains.xyz';
@@ -21,7 +23,7 @@ export const registration = (name, email, password) => {
       body: JSON.stringify({ name, email, password })
     })
    .then((res) => checkResponse(res))
- }; 
+}
 
 export const login = (email, password) => {
   return fetch(`${baseURL}/signin`, {
@@ -33,8 +35,17 @@ export const login = (email, password) => {
     body: JSON.stringify({ email, password })
   })
   .then((res) => checkResponse(res))
-}; 
+}
 
+export const getCurrentUser = () => {
+  return fetch(`${baseURL}/users/me`, {
+    credentials: 'include', 
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then((res) => checkResponse(res))
+}
 
 export const updateProfile = (userEmail, userName) => {
   return fetch(`${baseURL}/users/me`, {
@@ -71,17 +82,17 @@ export const movieSaved = (movie, like, moviesDelete) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        country: movie.country,  
-        director: movie.director,
-        duration: movie.duration,
-        year: movie.year,
-        description: movie.description,
+        country: movie.country || 'Нет данных',  
+        director: movie.director || 'Нет данных',
+        duration: movie.duration || 0,
+        year: movie.year || 'Нет данных',
+        description: movie.description || 'Нет данных',
         image: (`${imgServerUrl}${movie.image.url}`),
-        trailerLink: movie.trailerLink,
+        trailerLink: (isValidURL(movie.trailerLink) && movie.trailerLink) || `${baseURL}/*`,
         thumbnail: (`${imgServerUrl}${movie.image.formats.thumbnail.url}`),
         movieId: movie.id,
-        nameRU: movie.nameRU,
-        nameEN: movie.nameEN
+        nameRU: movie.nameRU || 'Нет данных',
+        nameEN: movie.nameEN || 'Нет данных',
       })
     })
     .then((res) => checkResponse(res))
@@ -117,4 +128,4 @@ export const getSavedMovies = () => {
     },
   })
   .then((res) => checkResponse(res)) 
-};
+}

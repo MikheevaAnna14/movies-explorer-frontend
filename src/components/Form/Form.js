@@ -21,7 +21,6 @@ function Form (props) {
       setErrorEmail('')
     }
   },[isValidEmail]);
-  
 
   function handleChangeEmail(event) {  
     const input = event.target;
@@ -78,7 +77,7 @@ function Form (props) {
         <button
           type="submit" 
           className={`form-container__button form-container__${props.name}-button`}
-          disabled={!(inputEmailValid && isValidPassword && props.validity)}
+          disabled={!(inputEmailValid && isValidPassword && props.validity && !props.isLoadingForm)}
         >
           {props.button}
         </button>

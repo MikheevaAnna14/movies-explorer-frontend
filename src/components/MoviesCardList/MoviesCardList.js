@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 import './MoviesCardList.css';
 import MoviesCard from "../MoviesCard/MoviesCard";
 
-
 function MoviesCardList (props) {
   const location = useLocation();
   if (location.pathname.includes("/movies")) {

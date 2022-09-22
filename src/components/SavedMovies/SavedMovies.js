@@ -8,9 +8,10 @@ import Footer from "../Footer/Footer";
 
 function SavedMovies (props) {
   const selectMovies = props.selectSavedMovies;
-  const moviesSaved = (selectMovies !== undefined || selectMovies.length !== 0 ) ? 
+  const arrayMovies = !props.searchSavedMoviesComplete ? props.arraySavedMovies : props.selectSavedMovies;
+  const moviesSaved = (selectMovies !== undefined && selectMovies.length !== 0 ) ? 
     (!props.isCheckedSavedMovies ? props.selectSavedMovies : props.shortSavedMovies) :
-    (!props.isCheckedSavedMovies ? props.arraySavedMovies : props.shortSavedMovies) ;
+    (!props.isCheckedSavedMovies ? arrayMovies : props.shortSavedMovies);
 
   return(
     <div className="saved-movies">
@@ -27,7 +28,6 @@ function SavedMovies (props) {
       <MoviesCardList
         buttonDelete={true}
         arraySavedMovies={props.arraySavedMovies}
-        shortSavedMovies={props.shortSavedMovies}
         moviesSaved={moviesSaved}
         onClickMoviesCardDelete={props.onClickMoviesCardDelete}
       />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 
 import './App.css';
 import Main from '../Main/Main';
@@ -10,13 +10,12 @@ import Register from '../Register/Register';
 import Login from '../Login/Login';
 import Profile from '../Profile/Profile';
 import PopupInfo from '../PopupInfo/PopupInfo';
-import Navbar from '../Navbar/Navbar';
 import * as api from '../../utils/MainApi';
 import * as movieApi from '../../utils/MoviesApi';
 import CurrentUserContext from './../../contexts/CurrentUserContext';
 import IsLoggedInContext from './../../contexts/IsLoggedInContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-
+import { shortDuration } from '../../utils/Constants';
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
@@ -33,48 +32,78 @@ function App() {
   const [shortFilms, setShortFilms] = useState([]);
   const [arraySavedMovies, setArraySavedMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [shortSavedMovies, setShortSavedMovies] = useState([]);
   const [isCheckedSavedMovies, setIsCheckedSavedMovies] = useState(false);
   const [selectSavedMovies, setSelectSavedMovies] = useState([]);
   const [searchComplete, setSearchComplete] = useState(false);
+  const [searchSavedMoviesComplete, setSearchSavedMoviesComplete] = useState(false);
 
   const history = useHistory();
   const location = useLocation();
 
-  React.useEffect(() => { 
+  React.useEffect(() => {
+    if(JSON.parse(localStorage.getItem('token'))) {
+      getCurrentUser();
+      setSearchSavedMoviesComplete(false);
+    } else return;
+  },[]);
+
+  React.useEffect(() => {
     if(localStorage.getItem('resSearch') === null) {
       return
     } else {
+      setSearchComplete(true);
       setMovieSelected(JSON.parse(localStorage.getItem('resSearch')));
       setShortFilms((JSON.parse(localStorage.getItem('resSearch')).filter((film) => {
-        return film.duration <= 40
-      })) );
+        return film.duration <= shortDuration
+      })));
     }
     setIsChecked(JSON.parse(localStorage.getItem('checkboxChecked')));
+    setArraySavedMovies(arraySavedMovies);
   },[]);
 
   React.useEffect(() => {
     if (location.pathname.includes('/saved-movies')) {
-     setSelectSavedMovies(arraySavedMovies);
-     setIsCheckedSavedMovies(false);
+      setSelectSavedMovies(arraySavedMovies);
+      setIsCheckedSavedMovies(false);
     }
-   },[location.pathname]);
+  },[location.pathname]);
 
-   React.useEffect(() => {
+  React.useEffect(() => {
     if (location.pathname.includes('/saved-movies')) {
       if (isCheckedSavedMovies) {
-        setShortSavedMovies(selectSavedMovies.filter((res) => {
-          return res.duration <= 40
-      }))
+        if (selectSavedMovies.length !== 0) {
+          setShortSavedMovies(selectSavedMovies.filter((movies) => {
+            return movies.duration <= shortDuration
+          }))
+        } else if (arraySavedMovies.length !== 0) {
+          setShortSavedMovies(arraySavedMovies.filter((movies) => {
+            return movies.duration <= shortDuration
+          }))
+        }
+      }
     }
-   }},[isCheckedSavedMovies]);
+  },[isCheckedSavedMovies]);
+
+  function getCurrentUser() {
+    api.getCurrentUser()
+      .then((res) => {
+        setCurrentUser({ name: res.name, email: res.email });
+        setIsLoggedIn(true);
+        getMoviesCurrentUser();
+      })
+      .catch((err) => console.log(err))
+  }
 
   function handleLoginSubmit(email, password) {
+    setIsLoadingForm(true);
     api.login(email, password)
       .then((res) => {
         setCurrentUser({ name: res.name, email: res.email, _id: res._id });
         setIsLoggedIn(true);
-        getMoviesCurrentUser();   
+        getMoviesCurrentUser();
+        localStorage.setItem('token', JSON.stringify(true));
         history.push('/movies')
       })
       .catch((err) => {
@@ -82,10 +111,11 @@ function App() {
         setPopupInfoIcon(false);
         setPopupMessage(err === 401 ? 'Вы ввели неправильный email или пароль' : 'При авторизации произошла ошибка');
       })
-    
+      .finally(() => setIsLoadingForm(false))
   }
 
   function handleRegisterSubmit(email, password, name) {
+    setIsLoadingForm(true);
     api.registration(name, email, password)
       .then(() => { 
           setCurrentUser(name, email);
@@ -96,29 +126,25 @@ function App() {
         setPopupInfoIcon(false);
         setPopupMessage(err === 400 ? 'Неправильный формат электронной почты' : 
           'Пользователь с таким email уже существует.');
-      });
+      })
+      .finally(() => setIsLoadingForm(false))
   }
 
   function getMoviesCurrentUser() {
     api.getSavedMovies()
       .then((movies) => {
         setArraySavedMovies(movies);        
-        if (isCheckedSavedMovies) {
-          setShortSavedMovies(movies.filter((res) => {
-            return res.duration <= 40
-          }))
-        }
-        })
+      })
       .catch((err) => console.log(err));
   }
 
   function handleClosePopupInfo () {
-    setPopupMessage('');
     setIsOpenPopup(false);
-    setPopupInfoIcon(false);
+    setPopupMessage('');
   }
 
   function handleUpdateProfile(userName, userEmail) {
+    setIsLoadingForm(true);
     api.updateProfile(userEmail, userName)
       .then((res) => {
         setCurrentUser(res);
@@ -127,12 +153,12 @@ function App() {
         setIsOpenPopup(true);
       })
       .catch((err) => {
-        setPopupMessage('Данные пользователя успешно изменены');
         setPopupInfoIcon(false);
         setIsOpenPopup(true);
         setPopupMessage(err === 409 ? 'Пользователь с таким email уже зарегистрирован' :
           'При обновлении профиля произошла ошибка');
       })
+      .finally(() => setIsLoadingForm(false))
   }
 
   function signout() {
@@ -144,16 +170,19 @@ function App() {
     setIsChecked(false);
     setArraySavedMovies([]);
     setSearchComplete(false);
+    setSearchSavedMoviesComplete(false);
     setShortSavedMovies([]);
     setIsCheckedSavedMovies(false);
+    setIsLoading(false);
+    setIsLoadingForm(false);
+    setSelectSavedMovies([]);
     localStorage.clear();
     history.push('/');
   }
 
   function checkShortFilms() {
-    console.log('checkShortFilms');
       setShortFilms(movieSelected.filter((film) => {
-        return film.duration <= 40
+        return film.duration <= shortDuration
       })) 
   }
 
@@ -161,12 +190,12 @@ function App() {
     const check = isChecked;
     const moviesArr = JSON.parse(localStorage.getItem('movies'));
     const resSearch = (moviesArr.filter((movies) => {
-      const searchString = [movies.nameRU, movies.nameEN, movies.year, movies.director, movies.country].join(' ');
+      const searchString = [movies.nameRU, movies.nameEN].join(' ');
       return ((searchString).toLowerCase()).includes((itemSearch).toLowerCase());
     }));
     if (check) {
       setShortFilms(resSearch.filter((res) => {
-        return res.duration <= 40
+        return res.duration <= shortDuration
       }))
     }
     localStorage.setItem('resSearch', JSON.stringify(resSearch));
@@ -175,7 +204,7 @@ function App() {
 
   function handleSearchSubmit(itemSearch) {
     localStorage.setItem('itemSearch', itemSearch);
-    setIsLoading(true)
+    setIsLoading(true);
     if(localStorage.getItem('movies') === null) {
       movieApi.moviesSearch()
         .then((res) => {
@@ -185,7 +214,12 @@ function App() {
           handleSearchMovies(itemSearch)
           setSearchComplete(true);
         })
-        .catch(err => console.log(err))
+        .catch((err) => {
+          setPopupInfoIcon(false);
+          setIsOpenPopup(true);
+          setPopupMessage('Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз');
+          console.log(err);
+        })
         .finally(() => setIsLoading(false))
     } else {
       handleSearchMovies(itemSearch);
@@ -194,17 +228,18 @@ function App() {
   }
 
   function handleSearchSubmitSavedMovies(itemSearchSavedMovies) {
+    setSearchSavedMoviesComplete(true);
     setSelectSavedMovies((arraySavedMovies.filter((movies) => {
-      const searchString = [movies.nameRU, movies.nameEN, movies.year, movies.director, movies.country].join(' ');
+      const searchString = [movies.nameRU, movies.nameEN].join(' ');
       return ((searchString).toLowerCase()).includes((itemSearchSavedMovies).toLowerCase());
     })));
     if (isCheckedSavedMovies) {
       const resSearchSavedMovies = (arraySavedMovies.filter((movies) => {
-        const searchString = [movies.nameRU, movies.nameEN, movies.year, movies.director, movies.country].join(' ');
+        const searchString = [movies.nameRU, movies.nameEN].join(' ');
         return ((searchString).toLowerCase()).includes((itemSearchSavedMovies).toLowerCase());
       }));
       setShortSavedMovies(resSearchSavedMovies.filter((res) => {
-        return res.duration <= 40
+        return res.duration <= shortDuration
       }))
     } 
   }
@@ -219,26 +254,29 @@ function App() {
   }
 
   function handleClickCheckboxSavedMovies(isCheck) {
+    console.log('app isCheck', isCheck);
     setIsCheckedSavedMovies(isCheck);
     if (!isCheck) {
       return
-    } else if (selectSavedMovies !== null){
-      setShortSavedMovies(selectSavedMovies.filter((movies) => {
-        return movies.duration <= 40
-      }))
-    } else if (arraySavedMovies !== null) {
-      setShortSavedMovies(arraySavedMovies.filter((movies) => {
-        return movies.duration <= 40
-      }))
-    }
+    } else { 
+      if (selectSavedMovies.length !== 0) {
+        setShortSavedMovies(selectSavedMovies.filter((movies) => {
+          return movies.duration <= shortDuration
+        }))
+      } else if (arraySavedMovies.length !== 0) {
+        setShortSavedMovies(arraySavedMovies.filter((movies) => {
+        return movies.duration <= shortDuration
+        }))
+      }
     return;
+    }
   }
 
   function handleClickMoviesCard(movie, like) {
     const moviesDelete = arraySavedMovies.find((movies) => movies.movieId === movie.id);
     api.movieSaved(movie, like, moviesDelete)
       .then(() => {
-        getMoviesCurrentUser()
+        getMoviesCurrentUser();
       })
       .catch((err) => console.log(err));
   }
@@ -248,9 +286,31 @@ function App() {
       .then(() => {
         getMoviesCurrentUser();
         if(selectSavedMovies.length !== 0) {
-          setSelectSavedMovies(selectSavedMovies.filter((movies) => {
-            return movies._id !== movie._id;
-          }));
+          if(!isCheckedSavedMovies) {
+            setSelectSavedMovies(selectSavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }))
+          } else {
+            setSelectSavedMovies(selectSavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }));
+            setShortSavedMovies(shortSavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }))
+          } 
+        } else if (arraySavedMovies !== 0) {
+          if(!isCheckedSavedMovies) {
+            setSelectSavedMovies(arraySavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }))
+          } else {
+            setSelectSavedMovies(arraySavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }));
+            setShortSavedMovies(shortSavedMovies.filter((movies) => {
+              return movies._id !== movie._id;
+            }))
+          }
         }
       })
       .catch((err) => console.log(err));
@@ -267,13 +327,17 @@ function App() {
               />
             </Route>
             <Route path="/signup">
+              {isLoggedIn && <Redirect to="/" />}
               <Register
                 onSubmit={handleRegisterSubmit}
+                isLoadingForm={isLoadingForm}
               />
             </Route>
             <Route path="/signin">
+              {isLoggedIn && <Redirect to="/" />}
               <Login
                 onSubmit={handleLoginSubmit}
+                isLoadingForm={isLoadingForm}
               />
             </Route>
             <ProtectedRoute
@@ -301,6 +365,7 @@ function App() {
               onSubmitSavedMovies={handleSearchSubmitSavedMovies}
               selectSavedMovies={selectSavedMovies}
               onClickMoviesCardDelete={handleClickCardDelete}
+              searchSavedMoviesComplete={searchSavedMoviesComplete}
             />
             <ProtectedRoute
               path="/profile"
@@ -308,13 +373,8 @@ function App() {
               isLoggedIn={isLoggedIn}
               onSubmit={handleUpdateProfile}
               onClick={signout}
+              isLoadingForm={isLoadingForm}
             />
-            <Route path="/navbar">
-              <Navbar
-                isOpen={true}
-                isLoggedIn={isLoggedIn}
-              />
-            </Route>
             <Route path="*">
               <PageNotFound />
             </Route>

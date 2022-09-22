@@ -6,7 +6,6 @@ import Navigation from "../Navigation/Navigation";
 function Navbar (props) {
   if (props.isOpen) {
     return(
-      <>
       <div className="navbar">
         <div className="navbar__overlay"></div>
         <div className="navbar__container">
@@ -17,7 +16,6 @@ function Navbar (props) {
           />
         </div>  
       </div>
-      </>
     )
   }
 }

@@ -16,13 +16,18 @@ function Movies (props) {
   const [windowDimensions, setWindowDimensions] = useState(width);
 
   React.useEffect(() => {
-    if(windowDimensions < 767) {
+    if(windowDimensions < 620) {
       setColumn(1);
       setRow(5);
       return;
     }
     if(windowDimensions < 1000) {
       setColumn(2);
+      setRow(5);
+      return;
+    }
+    if(windowDimensions < 1140) {
+      setColumn(3);
       setRow(4);
       return;
     } else {
@@ -41,7 +46,7 @@ function Movies (props) {
   }, [width]);
 
   function handleClickLoadMore() {
-    if(windowDimensions < 1000) {
+    if(windowDimensions < 620) {
       setRow(row + 2);
     } else {
     setRow(row + 1);

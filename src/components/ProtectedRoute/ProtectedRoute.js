@@ -5,7 +5,7 @@ const ProtectedRoute = ({ component: Component, ...props }) => {
   return (
     <Route>
       {
-        () => props.isLoggedIn   ? <Component {...props} /> : <Redirect exact to="/" />
+        () => JSON.parse(localStorage.getItem('token')) ? <Component {...props} /> : <Redirect exact to="/" />
       }
     </Route>
   );

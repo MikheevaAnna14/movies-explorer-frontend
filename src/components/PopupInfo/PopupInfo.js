@@ -32,7 +32,7 @@ function PopupInfo(props) {
               <p className="popup__container-heading">{props.Message}</p> 
             </div>
           </div>     
-        </div>
+    </div>
   )
 }
 

@@ -99,7 +99,7 @@ function Profile (props) {
         <button
           type="submit"
           className="profile-form__button"
-          disabled={!(inputValid && inputChange)}
+          disabled={!(inputValid && inputChange && !props.isLoadingForm)}
         >
           Редактировать
         </button>

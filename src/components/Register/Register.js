@@ -6,7 +6,7 @@ function Register(props) {
   const [isChangeName, setIsChangeName] = useState(false);
   const [isValidName, setIsValidName] = useState(true);
   const [errorName, setErrorName] = useState('');
-  const inputNameValid = isValidName && isChangeName;
+  const inputNameValid = isValidName && isChangeName && !props.isLoadingForm;
 
   React.useEffect(() => {
     if(!isValidName) {  
