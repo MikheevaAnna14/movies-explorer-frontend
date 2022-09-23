@@ -7,11 +7,8 @@ import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import Footer from "../Footer/Footer";
 
 function SavedMovies (props) {
-  const selectMovies = props.selectSavedMovies;
   const arrayMovies = !props.searchSavedMoviesComplete ? props.arraySavedMovies : props.selectSavedMovies;
-  const moviesSaved = (selectMovies !== undefined && selectMovies.length !== 0 ) ? 
-    (!props.isCheckedSavedMovies ? props.selectSavedMovies : props.shortSavedMovies) :
-    (!props.isCheckedSavedMovies ? arrayMovies : props.shortSavedMovies);
+  const moviesSaved = (!props.isCheckedSavedMovies ? arrayMovies : props.shortSavedMovies);
 
   return(
     <div className="saved-movies">

@@ -72,16 +72,18 @@ function App() {
 
   React.useEffect(() => {
     if (location.pathname.includes('/saved-movies')) {
-      if (isCheckedSavedMovies) {
+      if (isCheckedSavedMovies && !searchSavedMoviesComplete) {
+        if (arraySavedMovies.length !== 0) {
+          setShortSavedMovies(arraySavedMovies.filter((movies) => {
+            return movies.duration <= shortDuration
+          }))
+        } else return;
+      } else if (isCheckedSavedMovies && searchSavedMoviesComplete) {
         if (selectSavedMovies.length !== 0) {
           setShortSavedMovies(selectSavedMovies.filter((movies) => {
             return movies.duration <= shortDuration
           }))
-        } else if (arraySavedMovies.length !== 0) {
-          setShortSavedMovies(arraySavedMovies.filter((movies) => {
-            return movies.duration <= shortDuration
-          }))
-        }
+        } else return; 
       }
     }
   },[isCheckedSavedMovies]);
@@ -254,22 +256,20 @@ function App() {
   }
 
   function handleClickCheckboxSavedMovies(isCheck) {
-    console.log('app isCheck', isCheck);
     setIsCheckedSavedMovies(isCheck);
     if (!isCheck) {
       return
-    } else { 
-      if (selectSavedMovies.length !== 0) {
+    } else {
+      if (!searchSavedMoviesComplete) {
+        setShortSavedMovies(arraySavedMovies.filter((movies) => {
+          return movies.duration <= shortDuration
+        }))
+      } else {
         setShortSavedMovies(selectSavedMovies.filter((movies) => {
           return movies.duration <= shortDuration
         }))
-      } else if (arraySavedMovies.length !== 0) {
-        setShortSavedMovies(arraySavedMovies.filter((movies) => {
-        return movies.duration <= shortDuration
-        }))
-      }
-    return;
-    }
+      }       
+    } 
   }
 
   function handleClickMoviesCard(movie, like) {
