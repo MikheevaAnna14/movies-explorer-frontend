@@ -9,6 +9,10 @@
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -webkit-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -ms-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
 }
 
 .popup_opened {
@@ -16,6 +20,10 @@
   visibility: visible;
   opacity: 1;
   transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -webkit-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -moz-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -ms-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
+  -o-transition: opacity 0.3s ease-in, visibility 0.3s ease-out;
 }
 
 .popup__overlay {
@@ -34,11 +42,14 @@
   background-color: #fff;
   border: 1px solid #fff;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
   margin: auto;
   z-index: 2;
   text-align: center;
   position: relative;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  border-radius: 10px;
 }
 
 .popup__close {
@@ -58,12 +69,20 @@
   height: 32px;
   color: #fff;
   transition: opacity .5s;
+  -webkit-transition: opacity .5s;
+  -moz-transition: opacity .5s;
+  -ms-transition: opacity .5s;
+  -o-transition: opacity .5s;
 }
 
 .popup__close-icon:hover {
   opacity: 0.6;
   cursor: pointer;
   transition: opacity .5s;
+  -webkit-transition: opacity .5s;
+  -moz-transition: opacity .5s;
+  -ms-transition: opacity .5s;
+  -o-transition: opacity .5s;
 }
 
 .popup__container-info {

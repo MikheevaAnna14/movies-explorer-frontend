@@ -1,26 +1,34 @@
 import React from "react";
-
 import './SavedMovies.css';
 import Header from "../Header/Header";
 import SearchForm from "../SearchForm/SearchForm";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
-// import MoviesCard from "../MoviesCard/MoviesCard";
-import LoadMore from "../LoadMore/LoadMore";
+import Footer from "../Footer/Footer";
 
-function SavedMovies () {
+function SavedMovies (props) {
+  const arrayMovies = !props.searchSavedMoviesComplete ? props.arraySavedMovies : props.selectSavedMovies;
+  const moviesSaved = (!props.isCheckedSavedMovies ? arrayMovies : props.shortSavedMovies);
+
   return(
     <div className="saved-movies">
       <Header
-        loggedIn={true}
+        isLoggedIn={props.isLoggedIn}
+        onClick={props.onClick}
       />
-      <SearchForm />
-      <FilterCheckbox />
-      {/* карточки будут загружаться из БД и стейт-переменной */}
+      <SearchForm 
+        onSubmitSavedMovies={props.onSubmitSavedMovies}
+      />
+      <FilterCheckbox 
+        onClickCheckboxSavedMovies={props.onClickCheckboxSavedMovies}
+      />
       <MoviesCardList
         buttonDelete={true}
+        arraySavedMovies={props.arraySavedMovies}
+        moviesSaved={moviesSaved}
+        onClickMoviesCardDelete={props.onClickMoviesCardDelete}
       />
-      <LoadMore />
+      <Footer />
     </div>
   )
 }

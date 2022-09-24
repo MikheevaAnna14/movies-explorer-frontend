@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './Header.css';
 import headerLogo from '../../images/logo.svg';
@@ -9,6 +9,7 @@ import burgerMenu from '../../images/icon-burger.svg';
 
 function Header(props) {
   const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation();
 
   function handleClickBurger() {
     setIsOpen(true);
@@ -20,14 +21,15 @@ function Header(props) {
 
   return(
     <>
-      <div className={!props.locationMain ? "header" : "header  header_theme-color"}>
+      <div className={(location.pathname.includes("/movies") || location.pathname.includes("/saved-movies") || location.pathname.includes("/profile")) 
+        ? "header" : "header header_theme-pink"}>
         <Link to="/">
-          <img src={headerLogo} alt='логотип' className='header__logo' />
+          <img src={headerLogo} alt="логотип" className="header__logo" />
         </Link>
         <Navigation
-          loggedIn={props.loggedIn}  
+          isLoggedIn={props.isLoggedIn}  
         />     
-      {(props.loggedIn && 
+      {(props.isLoggedIn && 
         <button type="button" className={!props.locationMain ? "header__burger-menu" : 
           "header__burger-menu header__burger-menu_color"} onClick={handleClickBurger}>
           <img src={burgerMenu} alt='иконка бургер-меню' />
@@ -37,6 +39,7 @@ function Header(props) {
       <Navbar 
         isOpen={isOpen}
         onClose={handleClose}
+        isLoggedIn={props.isLoggedIn}
       />
     </>
   )

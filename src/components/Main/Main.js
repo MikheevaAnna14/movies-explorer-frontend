@@ -8,12 +8,11 @@ import AboutMe from '../AboutMe/AboutMe';
 import Portfolio from '../Portfolio/Portfolio';
 import Footer from "../Footer/Footer";
 
-function Main () {
+function Main (props) {
   return(
     <>
       <Header 
-        loggedIn={false} 
-        locationMain={true}
+        isLoggedIn={props.isLoggedIn}
       />
       <Promo />
       <AboutProject />

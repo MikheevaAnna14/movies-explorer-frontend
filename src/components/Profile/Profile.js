@@ -1,20 +1,45 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
 import './Profile.css';
 import Header from "../Header/Header";
+import CurrentUserContext from "../../contexts/CurrentUserContext";
 
-function Profile () {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+function Profile (props) {
+  const currentUser = React.useContext(CurrentUserContext);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [isValidName, setIsValidName] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [errorName, setErrorName] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
+  const inputValid = isValidName && isValidEmail;
+  const inputChange = userName !== currentUser.name || userEmail !== currentUser.email;
+
+  React.useEffect(() => {
+    setUserName(currentUser.name);
+    setUserEmail(currentUser.email);
+    setIsValidName(true);
+    setIsValidEmail(currentUser.email.match(/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i));
+  }, [currentUser]);
+
+  React.useEffect(() => {
+    if(!isValidName) {  
+      setErrorName('Имя может содержать буквы, цифры, пробел, дефис и состоять из 2-30 символов')
+    } else {
+      setErrorName('')
+    }
+  }, [isValidName]);
+
+  React.useEffect(() => {
+    if (!isValidEmail) {
+    setErrorEmail("Введен некорректный адрес электронной почты")
+    } else {
+      setErrorEmail('')
+    }
+  },[isValidEmail]);
   
   function handleChangeName(event) {
     const input = event.target;
-    setName(input.value);
+    setUserName(input.value);
     setIsValidName(input.validity.valid);
     if(!isValidName) {
       setErrorName(input.validationMessage)
@@ -25,10 +50,10 @@ function Profile () {
 
   function handleChangeEmail(event) {
     const input = event.target;
-    setEmail(input.value);
-    setIsValidEmail(input.validity.valid);
+    setUserEmail(input.value);
+    setIsValidEmail(input.value.match(/^[\w-.]+@[\w-]+\.[a-z]{2,4}$/i));
     if(!isValidEmail) {
-      setErrorEmail(input.validationMessage)
+      setErrorEmail("Введен некорректный адрес электронной почты")
     } else {
       setErrorEmail('')
     }
@@ -36,20 +61,23 @@ function Profile () {
 
   function handleSubmit(event) {
     event.preventDefault();
+    props.onSubmit(userName, userEmail);
   }
 
   return(
     <div className="profile">
-      <Header />
+      <Header 
+        isLoggedIn={props.isLoggedIn}
+      />
       <form className="profile-form" name="form-profile" onSubmit={handleSubmit}>
-        <h1 className="profile-form__title">Привет, {}!</h1>
+        <h1 className="profile-form__title">Привет, {currentUser.name}!</h1>
         <div className="profile-form__container">
           <label htmlFor="profile-name" className="profile-form__label">Имя</label>
           <input
             type="text"
             className="profile-form__input"
             id="profile-name"
-            value={name}
+            value={userName}
             onChange={handleChangeName}
             placeholder="Введите имя"
           />
@@ -62,27 +90,23 @@ function Profile () {
             type="email"
             className="profile-form__input"
             id="profile-email"
-            value={email}
+            value={userEmail}
             onChange={handleChangeEmail}
             placeholder="Введите Email"
           />
         </div>
         <span className="profile-form__input-error">{errorEmail}</span>
-        <span className="profile-form__input-error profile-form__input-error_server-request">
-          Вместо этого поля будет попап</span>
-        <Link to="/movies">
-          <button
-            type="submit"
-            className="profile-form__button"
-            disabled={!(isValidName && isValidEmail)}
-          >
-            Редактировать
-          </button>
-        </Link>
+        <button
+          type="submit"
+          className="profile-form__button"
+          disabled={!(inputValid && inputChange && !props.isLoadingForm)}
+        >
+          Редактировать
+        </button>
       </form>
-      <Link to="/">
-        <button type="submit" className="profile-form__button profile__button-exit">Выйти из аккаунта</button>
-      </Link>
+        <button type="button" className="profile-form__button profile__button-exit" onClick={props.onClick}>
+          Выйти из аккаунта
+        </button>
     </div>
   )
 }
