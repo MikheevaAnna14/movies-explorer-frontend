@@ -8,7 +8,7 @@ function Portfolio () {
       <h2 className="portfolio__title">Портфолио</h2>
       <div className="portfolio__links">
         <p className="portfolio__link-name">Статичный сайт</p>         
-          <a href="https://github.com/MikheevaAnna14/how-to-learn" className="portfolio__link" target="_blanc">
+          <a href="https://mikheevaanna14.github.io/how-to-learn/" className="portfolio__link" target="_blanc">
             <img src={portfolioLink} alt="иконка ссылки" className="portfolio__link-image" />
           </a>   
       </div>
