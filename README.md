@@ -1,6 +1,7 @@
 # movies-explorer-frontend
+
 Фронтенд дипломного проекта Яндекс Практикум 
-Сайт будет размещен по адресу: https://annamikheeva.movies.nomoredomains.xyz 
-Домен сервера: https://api.annamikheeva.movies.nomoredomains.xyz 
-Публичный IP: 51.250.30.68
-Ссылка на пул-реквест: https://github.com/MikheevaAnna14/movies-explorer-frontend/pull/2
+Сервис для поиска фильмов по запросу и сохранения в личном кабинете. Пользователь может зарегистрироваться, авторизоваться, изменять свои данные. Добавлять понравившиеся фильмы в избранное, фильтровать или удалять их.
+Используемые технологии: HTML, CSS, JavaScript, React.js.
+
+Сайт размещен по адресу: https://annamikheeva.movies.nomoredomains.xyz.
